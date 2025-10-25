@@ -51,10 +51,10 @@ console.log("Password:", password);
         if(!isMatch) return res.status(400).json("invalid password or email")
             ///create jwt token
         const token = jwt.sign({
-            id:userResult.id,email:userResult.email
+            id:userResult.id,email:userResult.email,is_admin:userResult.is_admin
         },process.env.JWT,
     {expiresIn:"1d"});
-    res.cookie("accessToken",token,{
+    res.cookie("access_token",token,{
         httpOnly:true,
         secure:process.env.NODE_ENV === "production",
         sameSite :"strict",
@@ -73,4 +73,15 @@ console.log("Password:", password);
         res.status(500).json(err);
         
     }
-}
+};
+ export const logOut = (req,res)=>{
+    console.log("user at logout",req.user);
+        const user = req.user;
+        res.clearCookie("token");
+        res.status(200).json({
+            message:"Logout successfully",
+            user:user ?{
+                id:user.id,email:user.email
+            }:null 
+        });
+ };
