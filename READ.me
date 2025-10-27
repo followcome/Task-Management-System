@@ -1,0 +1,170 @@
+openapi: 3.0.3
+info:
+  title: Task Manager API
+  version: 1.0.0
+  description: Backend API for a Task Management System (ToDo style)
+servers:
+  - url: http://localhost:4210/api
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - email
+                - password
+      responses:
+        '200':
+          description: User registered, sets token cookie
+
+  /auth/login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: User logged in, sets token cookie
+
+  /auth/logout:
+    post:
+      summary: Logout user
+      responses:
+        '200':
+          description: User logged out, clears token cookie
+
+  /task/create_task:
+    post:
+      summary: Create a new task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                completed:
+                  type: boolean
+              required:
+                - title
+                - description
+      responses:
+        '200':
+          description: Task created
+
+  /task:
+    get:
+      summary: Get user tasks
+      parameters:
+        - name: completed
+          in: query
+          schema:
+            type: boolean
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            enum: [created_at, title]
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of user tasks with pagination
+
+  /task/admin:
+    get:
+      summary: Get all tasks (admin only)
+      responses:
+        '200':
+          description: List of all tasks
+
+  /task/update_task/{id}:
+    put:
+      summary: Update a task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                completed:
+                  type: boolean
+      responses:
+        '200':
+          description: Task updated
+
+  /task/delete_task/{id}:
+    delete:
+      summary: Delete a task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Task deleted
+
+  /user/profile:
+    get:
+      summary: Get user profile
+      responses:
+        '200':
+          description: User profile info

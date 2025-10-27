@@ -14,8 +14,14 @@ export const verifyToken =async (req,res,next)=>{
 };
 
 export const verifyAdmin =(req,res,next)=>{
-    if(!req.user || req.user.is_admin){
-        return res.status(403).json("Access denied.Admin only!");
+    try {
+        if(!req.user || !req.user.is_admin){
+            return res.status(403).json("Access denied.Admin only!");
+        }
+        next();
+    } catch (err) {
+        console.log(err)
+        res.status(500).json(err)
+        
     }
-    next();
 }
